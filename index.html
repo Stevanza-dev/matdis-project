@@ -18,9 +18,65 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&
     family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          margin: 0;
+          background: #333;
+        }
+        canvas {
+          border: 2px solid white;
+        }
+    </style>
+
 </head>
 <body>
+
+    <header>
+        <a href="#" class="logo">PIRATE PARTY!</a>
+
+        <ul class="navlist">
+            <li><a href="#">HOME</a></li>
+            <li><a href="#">ABOUT</a></li>
+            <li><a href="#">GAME</a></li>
+            <li><a href="#">HARTA</a></li>
+            <li><a href="#">LEVEL</a></li>
+            <li><a href="#">CONTACT</a></li>
+        </ul>
+
+        <div class="bx bx-menu" id="menu-icon"></div>
+    </header>
     
-    <script type="js/script.js"></script>
+    <section class="hero">
+        <div class="hero-text">
+            <h5>MATT DIS</h5>
+            <h4>TRESURE HUNT</h4>
+            <h1>PIRATE</h1>
+            <p>GAME MEMBAJAK HARTA UNTUK KEKAYAAN, <br>KAYA NOMER SATU!!!</p>
+            <a href="#">LIHAT</a>
+            <a href="#" class="ctaa"><i class="ri-play-fill"></i>BERMAIN</a>
+        </div>
+
+        <div class="hero-img">
+            <img src="aset/playerrrr.png" alt="">
+        </div>
+    </section>
+
+    <div class="icons">
+        <a href="#"><i class="ri-instagram-line"></i></a>
+        <a href="#"><i class="ri-youtube-line"></i></a>
+        <a href="#"><i class="ri-dribbble-line"></i></a>
+    </div>
+
+    <div class="scroll-down">
+        <a href="#"><i class="ri-arrow-down-s-fill"></i></a>
+    </div>
+
+    <canvas id="maze"></canvas>
+    <script src="maze.js"></script>
 </body>
 </html>
