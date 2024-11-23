@@ -27,7 +27,7 @@ header{
     display: flex;
 }
 .navlist a{
-    color: white;
+    color: #3F0110;
     margin-left: 60px;
     font-size: 15px;
     font-weight: 600;
@@ -35,21 +35,33 @@ header{
     transition: all .55s ease;
 }
 .navlist a:hover{
-    border-bottom: 2px solid white;
+    border-bottom: 2px solid #7B3E00;
 }
 #menu-icon{
-    color: white;
+    color: #7B3E00;
     font-size: 35px;
     z-index: 10001;
     cursor: pointer;
     display: none;
 }
 
-.hero{
+/* .hero{
     height: 100%;
     width: 100%;
     min-height: 100vh;
     background: linear-gradient(245.59deg, #7B3E00 0%, #5B1F07 28.53%, #3F0110 75.52%);
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
+    gap: 2rem;
+} */
+
+.hero {
+    height: 100%;
+    width: 100%;
+    min-height: 100vh;
+    background: url('aset/bg.png') no-repeat center center/cover;
     position: relative;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -64,7 +76,7 @@ section{
 .hero-text h5{
     font-size: 14px;
     font-weight: 400;
-    color: white;
+    color: #3F0110;
     margin-bottom: 40px;
 }
 
@@ -72,19 +84,19 @@ section{
     font-family: 'Permanent Marker', cursive;
     font-size: 90px;
     line-height: 1;
-    color: white;
+    color: #3F0110;
     margin: 0 0 45px;
 }
 
 .hero-text h4{
     font-size: 18px;
     font-weight: 600;
-    color: white;
+    color: #3F0110;
     margin-bottom: 10px;
 }
 
 .hero-text p{
-    color: white;
+    color: #3F0110;
     font-size: 15px;
     line-height: 1.9;
     margin-bottom: 40px;
@@ -97,7 +109,7 @@ section{
 
 .hero-text a{
     display: inline-block;
-    color: white;
+    color: #3F0110;
     background: #7B3E00;
     border: 1px solid transparent;
     padding: 12px 30px;
@@ -111,13 +123,13 @@ section{
 
 .hero-text a:hover{
     background: transparent;
-    border: 1px solid white;
+    border: 1px solid #3F0110;
     transform: translateX(8px);
 }
 
 .hero-text a.ctaa{
     background: transparent;
-    border: 1px solid white;
+    border: 1px solid #3F0110;
     margin-left: 20px;
 }
 
@@ -136,7 +148,7 @@ section{
     display: block;
     margin: 26px 0;
     font-size: 24px;
-    color: white;
+    color: #3F0110;
     transition: all .50s ease;
 }
 
