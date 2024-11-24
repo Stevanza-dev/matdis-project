@@ -1,7 +1,14 @@
 class PirateParty {
     constructor() {
-        this.player = { x: 1, y: 1, hp: 20, attack: 5 };
+        const initialStage = this.mapData[1]; // Ambil data Stage 1
+        this.player = {
+            x: initialStage.playerStart.x,
+            y: initialStage.playerStart.y,
+            hp: 20,
+            attack: 5
+        };
         this.currentStage = 1;
+        this.loadStage(this.currentStage);
         this.mapData = {
             1: {
                 size: 5,
@@ -16,9 +23,9 @@ class PirateParty {
                     { x: 5, y: 4 }
                 ],
                 grumete: [
-                    { x: 4, y: 2 },
-                    { x: 4, y: 3 },
-                    { x: 4, y: 4 }
+                    { x: 4, y: 2, hp : 3, attack: 1 },
+                    { x: 4, y: 3, hp : 3, attack: 1 },
+                    { x: 4, y: 4, hp : 3, attack: 1 }
                 ],
                 pirates: [],
                 marines: [],
@@ -35,9 +42,9 @@ class PirateParty {
                     { x: 4, y: 5 }, { x: 5, y: 5 }
                 ],
                 grumete: [
-                    { x: 6, y: 3 },
-                    { x: 3, y: 3 },
-                    { x: 3, y: 6 }
+                    { x: 6, y: 3, hp : 3, attack: 1 },
+                    { x: 3, y: 3, hp : 3, attack: 1 },
+                    { x: 3, y: 6, hp : 3, attack: 1 }
                 ],
                 pirates: [],
                 marines: [],
@@ -60,10 +67,10 @@ class PirateParty {
                     { x: 2, y: 5 }, { x: 2, y: 6 }, {x:3, y:6}, {x:4, y:6}
                 ],
                 grumete: [
-                    { x: 5, y: 6 }
+                    { x: 5, y: 6, hp : 3, attack: 1 }
                 ],
                 pirates: [
-                    { x: 5, y: 5 }
+                    { x: 5, y: 5, hp: 10, attack: 3 }
                 ],
                 marines: [],
                 heals: [
@@ -87,10 +94,10 @@ class PirateParty {
                     { x: 8, y: 5 }, { x: 8, y: 6 }, {x: 8, y: 7}, {x:8, y:8}
                 ],
                 grumete: [
-                    { x: 4, y: 8 }, {x: 6, y: 2}
+                    { x: 4, y: 8,hp : 3, attack: 1 }, {x: 6, y: 2, hp : 3, attack: 1}
                 ],
                 pirates: [
-                    { x: 6, y: 1 }
+                    { x: 6, y: 1, hp: 10, attack: 3 }
                 ],
                 marines: [],
                 heals: [
@@ -117,19 +124,19 @@ class PirateParty {
                     { x: 6, y: 7 }, { x: 6, y: 8 }, {x: 6, y: 6}, {x: 7, y: 6}, {x: 8, y: 6}
                 ],
                 grumete: [
-                    { x: 5, y: 4 },
-                    { x: 5, y: 5 }
+                    { x: 5, y: 4, hp : 3, attack: 1 },
+                    { x: 5, y: 5, hp : 3, attack: 1 }
                 ],
                 pirates: [
-                    { x: 9, y: 1 },
-                    { x: 1, y: 9 },
-                    { x: 5, y: 9 },
-                    { x: 9, y: 5},
-                    { x: 5, y: 5}
+                    { x: 9, y: 1, hp: 10, attack: 3},
+                    { x: 1, y: 9, hp: 10, attack: 3},
+                    { x: 5, y: 9, hp: 10, attack: 3},
+                    { x: 9, y: 5, hp: 10, attack: 3},
+                    { x: 5, y: 5, hp: 10, attack: 3}
                 ],
                 marines: [
-                    { x: 9, y: 8 },
-                    { x: 8, y: 9 }
+                    { x: 9, y: 8, hp: 20, attack: 9 },
+                    { x: 8, y: 9, hp: 20, attack: 9 }
                 ],
                 heals: [],
                 attackBuffs: []
