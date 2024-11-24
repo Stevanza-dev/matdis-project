@@ -39,7 +39,7 @@ class PirateParty {
                 walls: [
                     { x: 1, y: 3 }, { x: 1, y: 4 }, { x: 1, y: 5 },
                     { x: 3, y: 1 }, { x: 4, y: 1 }, { x: 5, y: 1 },
-                    { x: 4, y: 5 }, { x: 5, y: 5 }
+                    { x: 4, y: 3 }, { x: 5, y: 3 }, {x: 3, y: 4}, {x: 3, y: 5}
                 ],
                 grumete: [
                     { x: 6, y: 3, hp : 3, attack: 1 },
@@ -125,7 +125,7 @@ class PirateParty {
                 ],
                 grumete: [
                     { x: 5, y: 4, hp : 3, attack: 1 },
-                    { x: 5, y: 5, hp : 3, attack: 1 }
+                    { x: 4, y: 5, hp : 3, attack: 1}
                 ],
                 pirates: [
                     { x: 9, y: 1, hp: 10, attack: 3},
