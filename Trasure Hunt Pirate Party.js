@@ -19,11 +19,18 @@ class PirateParty {
             chest: new Image(),
             grumete: new Image()
         };
-        this.images.player.src = 'player.png'; // Pastikan file gambar tersedia
-        this.images.heal.src = 'heal.png';
-        this.images.buff.src = 'buff.png';
-        this.images.chest.src = 'chest.png';
-        this.images.grumete.src = 'grumete.png';
+        this.images.player.src = 'player.png';
+        this.images.heal.src = 'BUFF 1.png';
+        this.images.buff.src = 'BUFF 2.png';
+        this.images.chest.src = 'Harta karun.png';
+        this.images.grumete.src = 'musuh.png';
+
+        // Pastikan gambar sudah dimuat sebelum merender
+        for (let img in this.images) {
+            this.images[img].onload = () => {
+                this.renderMap(); // Render peta setelah semua gambar dimuat
+            };
+        }
     }
 
     setupInput() {
@@ -36,11 +43,10 @@ class PirateParty {
     }
 
     getMapData() {
-        // (Pindahkan data map Anda ke sini)
         return {
             1: {
                 size: 5,
-                playerStart: { x: 1, y: 3 },
+                playerStart: { x: 1, y: 1 },
                 chest: { x: 5, y: 3 },
                 walls: [
                     { x: 1, y: 2 },
@@ -118,20 +124,22 @@ class PirateParty {
         if (direction === 'down') nextPosition.x += 1;
         if (direction === 'left') nextPosition.y -= 1;
         if (direction === 'right') nextPosition.y += 1;
-    
+
         const stageData = this.mapData[this.currentStage];
         const isWall = stageData.walls.some(
             (wall) => wall.x === nextPosition.x && wall.y === nextPosition.y
         );
-    
-        if (!isWall) {
+
+        // Cek batas peta
+        const isOutOfBounds = nextPosition.x < 1 || nextPosition.x > stageData.size || nextPosition.y < 1 || nextPosition.y > stageData.size;
+
+        if (!isWall && !isOutOfBounds) {
             this.player.x = nextPosition.x;
             this.player.y = nextPosition.y;
         }
-    
+
         this.renderMap();
     }
-    
 }
 
 const game = new PirateParty();
