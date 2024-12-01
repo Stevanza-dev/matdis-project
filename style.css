@@ -22,16 +22,17 @@ body {
     display: grid;
     grid-template-columns: repeat(10, 40px);
     grid-template-rows: repeat(10, 40px);
-    gap: 2px;
+    gap: 0;
     justify-content: center;
     margin: 20px auto;
   }
+  
   
   .cell {
     width: 40px;
     height: 40px;
     position: relative;
-    border: 1px solid #ccc;
+    border: 1px solid black;
   }
   
   .icon {
@@ -43,4 +44,17 @@ body {
   p {
     font-size: 1.2vw;
     margin: 50px 0;
+}
+
+#notification {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  display: none;
+  z-index: 1000;
 }

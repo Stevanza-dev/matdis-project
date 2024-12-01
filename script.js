@@ -57,6 +57,7 @@ function drawMap() {
       container.appendChild(cell);
     }
   }
+  updateStats();
 }
 
 // Fungsi untuk menentukan gambar berdasarkan elemen
@@ -128,7 +129,6 @@ function moveEnemies() {
             // Musuh menyerang pemain
             const enemy = enemyStats[element];
             stats.hp -= enemy.attack;
-            alert(`${enemy.name} attacked you! -${enemy.attack} HP`);
             if (stats.hp <= 0) {
               alert('Game Over!');
               resetGame();
@@ -179,44 +179,57 @@ function calculateTargetMove(enemyX, enemyY) {
   return bestMove;
 }
 
+// Fungsi untuk menampilkan notifikasi
+function showNotification(message) {
+  const notification = document.getElementById("notification");
+  notification.textContent = message;
+  notification.style.display = "block";
+
+  // Hapus notifikasi setelah 2 detik
+  setTimeout(() => {
+      notification.style.display = "none";
+  }, 2000);
+}
+
 // Fungsi untuk menangani interaksi
 function handleInteraction(element) {
   if (['G', 'B', 'M'].includes(element)) {
-    const enemy = enemyStats[element];
-    alert(`You encountered a ${enemy.name}!`);
-    stats.hp -= enemy.attack;
-    alert(`${enemy.name} attacked you! -${enemy.attack} HP`);
+      const enemy = enemyStats[element];
+      showNotification(`You encountered a ${enemy.name}!`);
+      stats.hp -= enemy.attack;
+      showNotification(`${enemy.name} attacked you! -${enemy.attack} HP`);
 
-    if (stats.hp <= 0) {
-      alert('Game Over!');
-      resetGame();
-      return;
-    }
+      if (stats.hp <= 0) {
+          showNotification('Game Over!');
+          resetGame();
+          return;
+      }
 
-    alert(`You defeated the ${enemy.name}!`);
-    map[playerPosition.y][playerPosition.x] = ' ';
+      showNotification(`You defeated the ${enemy.name}!`);
+      map[playerPosition.y][playerPosition.x] = ' ';
   }
 
   if (element === 'H') {
-    stats.hp += 10;
-    alert('You found a Heal! +10 HP');
-    map[playerPosition.y][playerPosition.x] = ' ';
+      stats.hp += 10;
+      showNotification('You found a Heal! +10 HP');
+      map[playerPosition.y][playerPosition.x] = ' ';
   }
 
   if (element === 'A') {
-    stats.attack += 2;
-    alert('You found an Attack Buff! +2 Attack');
-    map[playerPosition.y][playerPosition.x] = ' ';
+      stats.attack += 2;
+      showNotification('You found an Attack Buff! +2 Attack');
+      map[playerPosition.y][playerPosition.x] = ' ';
   }
 
   if (element === 'C') {
-    stats.stage++;
-    alert('You found the chest! Stage +1');
-    map[playerPosition.y][playerPosition.x] = ' ';
+      stats.stage++;
+      showNotification('You found the chest! Stage +1');
+      map[playerPosition.y][playerPosition.x] = ' ';
   }
-
+  map[playerPosition.y][playerPosition.x] = 'P';
   updateStats();
 }
+
 
 // Fungsi untuk memperbarui statistik
 function updateStats() {
