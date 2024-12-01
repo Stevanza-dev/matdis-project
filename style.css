@@ -4,8 +4,12 @@ body {
     background-color: #f4f4f9;
     margin: 0;
     padding: 0;
-  }
-  
+    background-image: url('assets/bg2.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
   h1 {
     margin-top: 20px;
   }
@@ -36,3 +40,7 @@ body {
     object-fit: cover;
   }
   
+  p {
+    font-size: 1.2vw;
+    margin: 50px 0;
+}
