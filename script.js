@@ -166,7 +166,7 @@ function calculateTargetMove(enemyX, enemyY) {
       newX < gridSize &&
       newY >= 0 &&
       newY < gridSize &&
-      (map[newY][newX] === ' ' || map[newY][newX] === 'P')
+      map[newY][newX] === ' '
     ) {
       const distance = Math.abs(newX - playerPosition.x) + Math.abs(newY - playerPosition.y);
       if (distance < shortestDistance) {
