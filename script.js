@@ -81,8 +81,11 @@ function getImageForElement(element) {
   }
 }
 
-// Fungsi untuk memindahkan pemain
 function movePlayer(event) {
+  // Hanya proses jika tombol panah ditekan
+  const validKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+  if (!validKeys.includes(event.key)) return;
+
   const { x, y } = playerPosition;
 
   let newX = x;
@@ -94,22 +97,23 @@ function movePlayer(event) {
   if (event.key === 'ArrowRight') newX++;
 
   if (newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize) {
-    if (map[newY][newX] !== 'W') {
-      // Update posisi pemain
-      const element = map[newY][newX];
-      map[y][x] = ' ';
-      playerPosition = { x: newX, y: newY };
-      map[newY][newX] = 'P';
+      if (map[newY][newX] !== 'W') {
+          // Update posisi pemain
+          const element = map[newY][newX];
+          map[y][x] = ' ';
+          playerPosition = { x: newX, y: newY };
+          map[newY][newX] = 'P';
 
-      // Interaksi
-      handleInteraction(element);
-    }
+          // Interaksi
+          handleInteraction(element);
+      }
   }
 
   validatePlayerPosition();
   moveEnemies(); // Pindahkan musuh setelah pemain bergerak
   drawMap();
 }
+
 
 // Fungsi untuk memindahkan musuh
 function moveEnemies() {
