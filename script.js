@@ -131,7 +131,7 @@ function moveEnemies() {
             stats.hp -= enemy.attack;
             if (stats.hp <= 0) {
               alert('Game Over!');
-              resetGame();
+              location.reload();
               return;
             }
           } else {
@@ -166,7 +166,7 @@ function calculateTargetMove(enemyX, enemyY) {
       newX < gridSize &&
       newY >= 0 &&
       newY < gridSize &&
-      map[newY][newX] === ' '
+      (map[newY][newX] === ' ' || map[newY][newX] === 'P')
     ) {
       const distance = Math.abs(newX - playerPosition.x) + Math.abs(newY - playerPosition.y);
       if (distance < shortestDistance) {
@@ -201,7 +201,7 @@ function handleInteraction(element) {
 
       if (stats.hp <= 0) {
           showNotification('Game Over!');
-          resetGame();
+          location.reload();
           return;
       }
 
@@ -238,24 +238,24 @@ function updateStats() {
   stageElement.textContent = stats.stage;
 }
 
-// Fungsi untuk mereset game
-function resetGame() {
-  stats.hp = 20;
-  stats.attack = 5;
-  stats.stage = 1;
-  playerPosition = { x: 0, y: 0 };
+// // Fungsi untuk mereset game
+// function resetGame() {
+//   stats.hp = 20;
+//   stats.attack = 5;
+//   stats.stage = 1;
+//   playerPosition = { x: 0, y: 0 };
 
-  map.forEach((row, y) => {
-    row.forEach((cell, x) => {
-      if (cell === 'P') map[y][x] = ' ';
-    });
-  });
-  map[0][0] = 'P';
+//   map.forEach((row, y) => {
+//     row.forEach((cell, x) => {
+//       if (cell === 'P') map[y][x] = ' ';
+//     });
+//   });
+//   map[0][0] = 'P';
 
-  validatePlayerPosition();
-  drawMap();
-  updateStats();
-}
+//   validatePlayerPosition();
+//   drawMap();
+//   updateStats();
+// }
 
 // Fungsi untuk memvalidasi posisi pemain
 function validatePlayerPosition() {
