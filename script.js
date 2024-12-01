@@ -14,7 +14,7 @@ let stats = {
 };
 
 // Posisi awal pemain
-let playerPosition = { x: 1, y: 1 };
+let playerPosition = { x: 0, y: 0 };
 
 // Statistik Musuh
 const enemyStats = {
@@ -27,7 +27,7 @@ const enemyStats = {
 const map = [
   ['P', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B'],
   [' ', 'W', 'W', 'W', ' ', 'W', 'W', ' ', 'W', ' '],
-  [' ',' ', 'G', 'G', ' ', ' ', ' ', ' ', 'A', ' '],
+  [' ', ' ', 'G', 'G', ' ', ' ', ' ', ' ', 'A', ' '],
   [' ', ' ', ' ', ' ', 'W', 'W', 'W', ' ', ' ', ' '],
   [' ', ' ', ' ', ' ', 'H', ' ', ' ', ' ', ' ', ' '],
   ['W', 'W', ' ', 'W', ' ', ' ', ' ', 'W', 'W', ' '],
@@ -67,9 +67,7 @@ function getImageForElement(element) {
     case 'P':
       return 'assets/Player.jpg';
     case 'G':
-      return 'assets/Enemy.jpg';
     case 'B':
-      return 'assets/Enemy.jpg';
     case 'M':
       return 'assets/Enemy.jpg';
     case 'C':
@@ -108,39 +106,100 @@ function movePlayer(event) {
     }
   }
 
+  validatePlayerPosition();
+  moveEnemies(); // Pindahkan musuh setelah pemain bergerak
   drawMap();
+}
+
+// Fungsi untuk memindahkan musuh
+function moveEnemies() {
+  for (let y = 0; y < gridSize; y++) {
+    for (let x = 0; x < gridSize; x++) {
+      const element = map[y][x];
+      if (['G', 'B', 'M'].includes(element)) {
+        const target = calculateTargetMove(x, y);
+        if (target) {
+          const [newX, newY] = target;
+          if (newX === playerPosition.x && newY === playerPosition.y) {
+            // Musuh menyerang pemain
+            const enemy = enemyStats[element];
+            stats.hp -= enemy.attack;
+            alert(`${enemy.name} attacked you! -${enemy.attack} HP`);
+            if (stats.hp <= 0) {
+              alert('Game Over!');
+              resetGame();
+              return;
+            }
+          } else {
+            // Pindahkan musuh ke posisi baru
+            map[y][x] = ' ';
+            map[newY][newX] = element;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Fungsi untuk menghitung langkah target musuh
+function calculateTargetMove(enemyX, enemyY) {
+  const directions = [
+    { dx: 0, dy: -1 }, // Up
+    { dx: 0, dy: 1 },  // Down
+    { dx: -1, dy: 0 }, // Left
+    { dx: 1, dy: 0 },  // Right
+  ];
+
+  let shortestDistance = Infinity;
+  let bestMove = null;
+
+  for (const { dx, dy } of directions) {
+    const newX = enemyX + dx;
+    const newY = enemyY + dy;
+
+    if (
+      newX >= 0 &&
+      newX < gridSize &&
+      newY >= 0 &&
+      newY < gridSize &&
+      map[newY][newX] === ' '
+    ) {
+      const distance = Math.abs(newX - playerPosition.x) + Math.abs(newY - playerPosition.y);
+      if (distance < shortestDistance) {
+        shortestDistance = distance;
+        bestMove = [newX, newY];
+      }
+    }
+  }
+
+  return bestMove;
 }
 
 // Fungsi untuk menangani interaksi
 function handleInteraction(element) {
   if (['G', 'B', 'M'].includes(element)) {
-    // Dapatkan statistik musuh
     const enemy = enemyStats[element];
     alert(`You encountered a ${enemy.name}!`);
-
-    // Pertempuran
     stats.hp -= enemy.attack;
     alert(`${enemy.name} attacked you! -${enemy.attack} HP`);
+
     if (stats.hp <= 0) {
       alert('Game Over!');
       resetGame();
       return;
     }
 
-    // Pemain menyerang musuh (hapus musuh setelah menyerang)
     alert(`You defeated the ${enemy.name}!`);
     map[playerPosition.y][playerPosition.x] = ' ';
   }
 
   if (element === 'H') {
-    // Heal pemain
     stats.hp += 10;
     alert('You found a Heal! +10 HP');
     map[playerPosition.y][playerPosition.x] = ' ';
   }
 
   if (element === 'A') {
-    // Buff Attack
     stats.attack += 2;
     alert('You found an Attack Buff! +2 Attack');
     map[playerPosition.y][playerPosition.x] = ' ';
@@ -152,7 +211,6 @@ function handleInteraction(element) {
     map[playerPosition.y][playerPosition.x] = ' ';
   }
 
-  // Update statistik
   updateStats();
 }
 
@@ -168,12 +226,30 @@ function resetGame() {
   stats.hp = 20;
   stats.attack = 5;
   stats.stage = 1;
-  playerPosition = { x: 1, y: 1 };
+  playerPosition = { x: 0, y: 0 };
 
-  // Reset peta
-  map[2][1] = 'P'; // Tempatkan pemain kembali
+  map.forEach((row, y) => {
+    row.forEach((cell, x) => {
+      if (cell === 'P') map[y][x] = ' ';
+    });
+  });
+  map[0][0] = 'P';
+
+  validatePlayerPosition();
   drawMap();
   updateStats();
+}
+
+// Fungsi untuk memvalidasi posisi pemain
+function validatePlayerPosition() {
+  for (let y = 0; y < gridSize; y++) {
+    for (let x = 0; x < gridSize; x++) {
+      if (map[y][x] === 'P') {
+        playerPosition = { x, y };
+        return;
+      }
+    }
+  }
 }
 
 // Event listener untuk kontrol pemain
@@ -181,3 +257,4 @@ window.addEventListener('keydown', movePlayer);
 
 // Inisialisasi game
 drawMap();
+updateStats();
