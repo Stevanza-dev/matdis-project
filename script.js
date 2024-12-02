@@ -97,6 +97,9 @@ function movePlayer(event) {
   if (event.key === 'ArrowLeft') newX--;
   if (event.key === 'ArrowRight') newX++;
 
+  // Periksa apakah pergerakan valid
+  let playerMoved = false;
+
   if (newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize) {
       if (map[newY][newX] !== 'W') {
           // Update posisi pemain
@@ -107,76 +110,168 @@ function movePlayer(event) {
 
           // Interaksi
           handleInteraction(element);
+          
+          // Tandai bahwa pemain berhasil bergerak
+          playerMoved = true;
       }
   }
 
   validatePlayerPosition();
-  moveEnemies(); // Pindahkan musuh setelah pemain bergerak
+  
+  // Hanya pindahkan musuh jika pemain berhasil bergerak
+  if (playerMoved) {
+      moveEnemies();
+  }
+  
   drawMap();
 }
 
-
-// Fungsi untuk memindahkan musuh
 function moveEnemies() {
+  const newPositions = []; // Menyimpan posisi tujuan sementara
+
   for (let y = 0; y < gridSize; y++) {
     for (let x = 0; x < gridSize; x++) {
       const element = map[y][x];
       if (['G', 'B', 'M'].includes(element)) {
-        const target = calculateTargetMove(x, y);
+        const target = calculateTargetMoveAStar(x, y);
+
         if (target) {
-          const [newX, newY] = target;
+          const { x: newX, y: newY } = target;
+
+          if (newPositions.some(pos => pos.x === newX && pos.y === newY)) {
+            // Jika posisi tujuan sudah ditempati, musuh tetap di tempat
+            newPositions.push({ x, y, element });
+            continue;
+          }
+
           if (newX === playerPosition.x && newY === playerPosition.y) {
             // Musuh menyerang pemain
             const enemy = enemyStats[element];
             stats.hp -= enemy.attack;
+
             if (stats.hp <= 0) {
               alert('Game Over!');
               location.reload();
               return;
             }
           } else {
-            // Pindahkan musuh ke posisi baru
-            map[y][x] = ' ';
-            map[newY][newX] = element;
+            // Tambahkan posisi tujuan ke daftar
+            newPositions.push({ x: newX, y: newY, element });
+            map[y][x] = ' '; // Kosongkan posisi awal
           }
         }
       }
     }
   }
+
+  // Perbarui posisi musuh di peta setelah semua validasi
+  newPositions.forEach(({ x, y, element }) => {
+    map[y][x] = element;
+  });
 }
 
-// Fungsi untuk menghitung langkah target musuh
-function calculateTargetMove(enemyX, enemyY) {
-  const directions = [
-    { dx: 0, dy: -1 }, // Up
-    { dx: 0, dy: 1 },  // Down
-    { dx: -1, dy: 0 }, // Left
-    { dx: 1, dy: 0 },  // Right
-  ];
+function calculateTargetMoveAStar(enemyX, enemyY) {
+  const openList = []; // Node yang akan dievaluasi
+  const closedList = []; // Node yang telah dievaluasi
 
-  let shortestDistance = Infinity;
-  let bestMove = null;
+  // Fungsi untuk menghitung jarak heuristik (Manhattan Distance)
+  function heuristic(x, y) {
+    return Math.abs(x - playerPosition.x) + Math.abs(y - playerPosition.y);
+  }
 
-  for (const { dx, dy } of directions) {
-    const newX = enemyX + dx;
-    const newY = enemyY + dy;
+  // Fungsi untuk memeriksa apakah node ada dalam list
+  function isInList(list, x, y) {
+    return list.some(node => node.x === x && node.y === y);
+  }
 
-    if (
-      newX >= 0 &&
-      newX < gridSize &&
-      newY >= 0 &&
-      newY < gridSize &&
-      map[newY][newX] === ' '
-    ) {
-      const distance = Math.abs(newX - playerPosition.x) + Math.abs(newY - playerPosition.y);
-      if (distance < shortestDistance) {
-        shortestDistance = distance;
-        bestMove = [newX, newY];
+  // Fungsi untuk mendapatkan node dengan nilai f terkecil
+  function getLowestFNode(list) {
+    return list.reduce((lowest, node) => (node.f < lowest.f ? node : lowest), list[0]);
+  }
+
+  // Tambahkan node awal (posisi musuh) ke openList
+  openList.push({
+    x: enemyX,
+    y: enemyY,
+    g: 0, // Biaya dari awal
+    h: heuristic(enemyX, enemyY), // Estimasi jarak ke tujuan
+    f: heuristic(enemyX, enemyY), // Total biaya
+    parent: null, // Jalur sebelumnya
+  });
+
+  while (openList.length > 0) {
+    // Ambil node dengan nilai f terkecil
+    const current = getLowestFNode(openList);
+
+    // Jika mencapai pemain, rekonstruksi jalur
+    if (current.x === playerPosition.x && current.y === playerPosition.y) {
+      let path = [];
+      let temp = current;
+      while (temp.parent) {
+        path.push({ x: temp.x, y: temp.y });
+        temp = temp.parent;
+      }
+      path.reverse();
+      return path.length > 0 ? path[0] : null; // Kembalikan langkah pertama
+    }
+
+    // Pindahkan node ke closedList
+    openList.splice(openList.indexOf(current), 1);
+    closedList.push(current);
+
+    // Periksa semua tetangga
+    const neighbors = [
+      { x: current.x, y: current.y - 1 }, // Atas
+      { x: current.x, y: current.y + 1 }, // Bawah
+      { x: current.x - 1, y: current.y }, // Kiri
+      { x: current.x + 1, y: current.y }, // Kanan
+    ];
+
+    for (const neighbor of neighbors) {
+      // Abaikan jika di luar grid atau di dinding
+      if (
+        neighbor.x < 0 ||
+        neighbor.x >= gridSize ||
+        neighbor.y < 0 ||
+        neighbor.y >= gridSize ||
+        map[neighbor.y][neighbor.x] === 'W'
+      ) {
+        continue;
+      }
+
+      // Hitung nilai g, h, dan f untuk tetangga
+      const g = current.g + 1;
+      const h = heuristic(neighbor.x, neighbor.y);
+      const f = g + h;
+
+      // Abaikan jika tetangga sudah di closedList
+      if (isInList(closedList, neighbor.x, neighbor.y)) continue;
+
+      // Tambahkan tetangga ke openList jika belum ada
+      if (!isInList(openList, neighbor.x, neighbor.y)) {
+        openList.push({
+          x: neighbor.x,
+          y: neighbor.y,
+          g,
+          h,
+          f,
+          parent: current,
+        });
+      } else {
+        // Perbarui node jika jalur baru lebih baik
+        const existingNode = openList.find(
+          node => node.x === neighbor.x && node.y === neighbor.y
+        );
+        if (g < existingNode.g) {
+          existingNode.g = g;
+          existingNode.f = f;
+          existingNode.parent = current;
+        }
       }
     }
   }
 
-  return bestMove;
+  return null; // Tidak ada jalur ke pemain
 }
 
 // Fungsi untuk menampilkan notifikasi
@@ -237,25 +332,6 @@ function updateStats() {
   attackElement.textContent = stats.attack;
   stageElement.textContent = stats.stage;
 }
-
-// // Fungsi untuk mereset game
-// function resetGame() {
-//   stats.hp = 20;
-//   stats.attack = 5;
-//   stats.stage = 1;
-//   playerPosition = { x: 0, y: 0 };
-
-//   map.forEach((row, y) => {
-//     row.forEach((cell, x) => {
-//       if (cell === 'P') map[y][x] = ' ';
-//     });
-//   });
-//   map[0][0] = 'P';
-
-//   validatePlayerPosition();
-//   drawMap();
-//   updateStats();
-// }
 
 // Fungsi untuk memvalidasi posisi pemain
 function validatePlayerPosition() {
