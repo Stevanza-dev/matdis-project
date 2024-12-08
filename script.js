@@ -3,6 +3,9 @@ const hpElement = document.getElementById('hp');
 const attackElement = document.getElementById('attack');
 const stageElement = document.getElementById('stage');
 
+// Array untuk mencatat histori pergerakan
+let playerHistory = [];
+
 // Ukuran grid
 const gridSize = 10;
 
@@ -113,6 +116,10 @@ function movePlayer(event) {
           
           // Tandai bahwa pemain berhasil bergerak
           playerMoved = true;
+          
+          // Rekam histori
+          recordPlayerHistory();
+          drawPlayerHistory();
       }
   }
 
@@ -128,6 +135,7 @@ function movePlayer(event) {
 
 function moveEnemies() {
   const newPositions = []; // Menyimpan posisi tujuan sementara
+  let enemyAttacked = false; // Flag untuk mencegah serangan ganda
 
   for (let y = 0; y < gridSize; y++) {
     for (let x = 0; x < gridSize; x++) {
@@ -144,10 +152,12 @@ function moveEnemies() {
             continue;
           }
 
-          if (newX === playerPosition.x && newY === playerPosition.y) {
+          // Tambahkan pengecekan serangan hanya sekali
+          if (newX === playerPosition.x && newY === playerPosition.y && !enemyAttacked) {
             // Musuh menyerang pemain
             const enemy = enemyStats[element];
             stats.hp -= enemy.attack;
+            enemyAttacked = true; // Set flag agar tidak menyerang lagi
 
             if (stats.hp <= 0) {
               alert('Game Over!');
@@ -290,12 +300,11 @@ function showNotification(message) {
 function handleInteraction(element) {
   if (['G', 'B', 'M'].includes(element)) {
       const enemy = enemyStats[element];
-      showNotification(`You encountered a ${enemy.name}!`);
       stats.hp -= enemy.attack;
       showNotification(`${enemy.name} attacked you! -${enemy.attack} HP`);
 
       if (stats.hp <= 0) {
-          showNotification('Game Over!');
+          alert('Game Over!');
           location.reload();
           return;
       }
@@ -347,6 +356,23 @@ function validatePlayerPosition() {
 
 // Event listener untuk kontrol pemain
 window.addEventListener('keydown', movePlayer);
+
+
+// Fungsi untuk mencatat histori pergerakan
+function recordPlayerHistory() {
+  playerHistory.push({ x: playerPosition.x, y: playerPosition.y });
+}
+
+// Fungsi untuk menggambar histori pergerakan di elemen HTML
+function drawPlayerHistory() {
+  const historyElement = document.getElementById('history');
+  historyElement.innerHTML = ''; // Kosongkan elemen histori
+  playerHistory.forEach((position, index) => {
+    const entry = document.createElement('div');
+    entry.textContent = `Step ${index + 1}: (${position.x}, ${position.y})`;
+    historyElement.appendChild(entry);
+  });
+}
 
 // Inisialisasi game
 drawMap();
